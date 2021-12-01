@@ -1,24 +1,26 @@
 (ns advent-of-code.day-01)
-(require '[clojure.string :as str])
-
-(defn parse-int [s]
-  (Integer. s))
+(require '[clojure.string :as string])
 
 (defn read-input [input]
-  (map parse-int (str/split input #"\n")))
+  (map #(Integer. %) (string/split input #"\n")))
+
+(defn count-increases
+  "Counts the number of number pairs where the first element is lower"
+  [input]
+  (reduce (fn [acc [a b]]
+            (if (< a b) (inc acc) acc))
+          0
+          input))
 
 (defn part-1
   "Day 01 Part 1"
   [input]
-  (reduce (fn [r [a b]]
-            (if (< a b) (inc r) r))
-          0
-          (partition 2 1 (read-input input))))
+  (count-increases (partition 2 1 (read-input input))))
 
 (defn part-2
   "Day 01 Part 2"
   [input]
-  (reduce (fn [r [v1 _ _ v4]]
-            (if (< v1 v4) (inc r) r))
-          0
-          (partition 4 1 (read-input input))))
+  (count-increases
+   (map
+    (fn [[a _ _ b]] (list a b))
+    (partition 4 1 (read-input input)))))
