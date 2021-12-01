@@ -6,11 +6,11 @@
 
 (defn count-increases
   "Counts the number of number pairs where the first element is lower"
-  [input]
+  [pairs]
   (reduce (fn [acc [a b]]
             (if (< a b) (inc acc) acc))
           0
-          input))
+          pairs))
 
 (defn part-1
   "Day 01 Part 1"
