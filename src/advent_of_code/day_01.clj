@@ -12,15 +12,25 @@
           0
           pairs))
 
+(defn count-increases-2
+  "Counts the number of number pairs where the first element is lower
+   Does exactly the same as count-increases"
+  [pairs]
+  (count (filter #(apply < %) pairs)))
+
 (defn part-1
   "Day 01 Part 1"
   [input]
-  (count-increases (partition 2 1 (read-input input))))
+  (->> input
+       read-input
+       (partition 2 1)
+       count-increases))
 
 (defn part-2
   "Day 01 Part 2"
   [input]
-  (count-increases
-   (map
-    (fn [[a _ _ b]] (list a b))
-    (partition 4 1 (read-input input)))))
+  (->> input
+       read-input
+       (partition 4 1)
+       (map (fn [[a _ _ b]] (list a b)))
+       count-increases-2))
