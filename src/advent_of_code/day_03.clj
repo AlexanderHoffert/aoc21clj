@@ -35,8 +35,6 @@
          count-1-bits
          (calc (/ (count lines) 2)))))
 
-(comment "+++here begins part 2+++")
-
 (defn more-1-bits
   "true if there are more 1 than 0 as nth char of each line"
   [lines index]
