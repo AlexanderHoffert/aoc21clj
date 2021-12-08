@@ -41,6 +41,9 @@
 (defn get-score [pick-list boards]
   (some #(get-board-score pick-list %) boards))
 
+(defn get-not-winning-boards [pick-list boards]
+  (filter #(nil? (get-board-score pick-list %)) boards))
+
 (defn part-1
   "Day 04 Part 1"
   [input]
@@ -53,4 +56,11 @@
 (defn part-2
   "Day 04 Part 2"
   [input]
-  0)
+  (let [{:keys [numbers boards]} (parse-input input)]
+    (loop [n 1
+           remaining-boards boards]
+      (let [pick-list (take n numbers)
+            first-board-score (get-board-score pick-list (first remaining-boards))]
+        (if (and (= (count remaining-boards) 1) first-board-score)
+          first-board-score
+          (recur (inc n) (get-not-winning-boards pick-list remaining-boards)))))))
