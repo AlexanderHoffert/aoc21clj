@@ -9,31 +9,54 @@
 (def scores {\) 3
              \] 57
              \} 1197
-             \> 25137})
+             \> 25137
 
-(defn get-score [lines]
-  (reduce (fn [sum line]
-            (+ sum
-               (loop [index 0
-                      stack '()]
-                 (let [current (get line index)
-                       is-closing (contains? valid-opening-bracket current)]
-                   (if (= index (count line)) 0
-                       (if (and is-closing
-                                (not= (first stack)
-                                      (valid-opening-bracket current)))
-                         (scores current)
-                         (recur (inc index) (if is-closing (rest stack) (conj stack current)))))))))
-          0 lines))
+             \( 1
+             \[ 2
+             \{ 3
+             \< 4})
+
+(defn get-line-score [end-score-fn corrupted-score-fn line]
+  (loop [index 0
+         stack '()]
+    (let [current (get line index)
+          is-closing (contains? valid-opening-bracket current)]
+      (if (= index (count line)) (end-score-fn stack)
+          (if (and is-closing
+                   (not= (first stack)
+                         (valid-opening-bracket current)))
+            (corrupted-score-fn current)
+            (recur (inc index) (if is-closing (rest stack) (conj stack current))))))))
+
+(defn get-incomplete-stack-score [stack]
+  (reduce (fn [acc bracket]
+            (->> acc
+                 (* 5)
+                 (+ (scores bracket))))
+          0 stack))
+
+(defn get-corruption-score [lines]
+  (->> lines
+       (map (partial get-line-score (fn [_] 0) #(scores %)))
+       (apply +)))
+
+(defn get-incomplete-score [lines]
+  (->> lines
+       (map (partial get-line-score get-incomplete-stack-score (fn [_] 0)))
+       (filter (fn [value] (not (zero? value))))
+       sort
+       ((fn [values] (nth values (/ (count values) 2))))))
 
 (defn part-1
   "Day 10 Part 1"
   [input]
   (->> input
        string/split-lines
-       get-score))
+       get-corruption-score))
 
 (defn part-2
   "Day 10 Part 2"
   [input]
-  input)
+  (->> input
+       string/split-lines
+       get-incomplete-score))
