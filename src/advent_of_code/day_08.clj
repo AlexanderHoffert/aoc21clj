@@ -40,13 +40,20 @@
         four (first (counts 4))
         seven (first (counts 3))
         eight (first (counts 7))
-        six (some #(when (not (subset? one %)) %) (counts 6))
-        three (some #(when (subset? one %) %) (counts 5))
-        nine (some #(when (subset? three %) %) (counts 6))
-        zero (first (difference (counts 6) #{six nine}))
-        segment-b (first (difference nine three))
-        five (some #(when (contains? % segment-b) %) (counts 5))
-        two (first (difference (counts 5) #{three five}))]
+        six (->> (counts 6)
+                 (some #(when (not (subset? one %)) %)))
+        three (->> (counts 5)
+                   (some #(when (subset? one %) %)))
+        nine (->> (counts 6)
+                  (some #(when (subset? three %) %)))
+        zero (->> #{six nine}
+                  (difference (counts 6))
+                  first)
+        five (->> (counts 5)
+                  (some #(when (subset? % six) %)))
+        two (->> #{three five}
+                 (difference (counts 5))
+                 first)]
     {one 1 two 2 three 3 four 4 five 5 six 6 seven 7 eight 8 nine 9 zero 0}))
 
 (defn get-output-value
