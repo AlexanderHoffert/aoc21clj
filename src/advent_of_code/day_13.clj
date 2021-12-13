@@ -50,8 +50,8 @@
            (for [x (range 0 (inc max-x))]
 
              (if (contains? points {\x x \y y})
-               "#"
-               " ")))
+               "█"
+               "░")))
          (map #(string/join "" %))
          (#(doall (map println %))))))
 
